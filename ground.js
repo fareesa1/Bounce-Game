@@ -15,10 +15,8 @@ class Ground
   show() {
     let pos = this.body.position;
     push();
-    rectMode(CENTER);
-    noStroke();
-    fill(148,127,146);
-    rect(pos.x,pos.y, this.w, this.h);
+    imageMode(CENTER)
+    image(groundImg ,pos.x,pos.y, this.w, this.h);
     pop();
   }
 }

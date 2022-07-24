@@ -9,119 +9,99 @@ const Composite = Matter.Composite;
 
 let engine;
 let world;
-var rope,fruit,ground;
-var fruit_con;
-var fruit_con_2;
+var ground
+var ball
 
-var bg_img;
-var food;
-var rabbit;
-
-var button;
-var bunny;
-var blink,eat,sad;
 
 function preload()
 {
-  bg_img = loadImage('background.png');
-  food = loadImage('melon.png');
-  rabbit = loadImage('Rabbit-01.png');;
-  blink = loadAnimation("blink_1.png","blink_2.png","blink_3.png");
-  eat = loadAnimation("eat_0.png" , "eat_1.png","eat_2.png","eat_3.png","eat_4.png");
-  sad = loadAnimation("sad_1.png","sad_2.png","sad_3.png");
-  
-  blink.playing = true;
-  eat.playing = true;
-  sad.playing = true;
-  sad.looping= false;
-  eat.looping = false; 
+  groundImg = loadImage("https://cdnb.artstation.com/p/assets/images/images/011/210/507/large/kim-shein-wall-sprite.jpg")
+  ballImg = loadImage("https://openclipart.org/image/2000px/327602")
+  fireImg = loadImage("https://upload.wikimedia.org/wikipedia/commons/thumb/5/52/Mario_Fireball.png/1280px-Mario_Fireball.png")
 }
 
 function setup() {
-  createCanvas(500,700);
-  frameRate(80);
+  createCanvas(700,700);
+  frameRate(80)
+eng = Engine.create()
+world = eng.world
 
-  engine = Engine.create();
-  world = engine.world;
-  
-  button = createImg('cut_btn.png');
-  button.position(220,30);
-  button.size(50,50);
-  button.mouseClicked(drop);
-  
-  rope = new Rope(7,{x:245,y:30});
-  ground = new Ground(200,690,600,20);
+ball = Matter.Bodies.circle(50,600,30,{restitution:0.7})
+World.add(world,ball)
 
-  blink.frameDelay = 20;
-  eat.frameDelay = 20;
-  sad.frameDelay = 20;
 
-  bunny = createSprite(230,620,100,100);
-  bunny.scale = 0.2;
+ground = new Ground(0,680,1200,400)
+ground2=new Ground(1300,600,1200,400)
+ground3 = new Ground(-1300,600,1200,400)
 
-  bunny.addAnimation('blinking',blink);
+ground4 = new Ground(0,0,1200,400)
+ground5=new Ground(1300,0,1200,400)
+ground6 = new Ground(-1300,0,1200,400)
 
-  bunny.addAnimation('eating',eat);
-  bunny.addAnimation('crying',sad);
-  bunny.changeAnimation('blinking');
-  
-  fruit = Bodies.circle(300,300,20);
-  Matter.Composite.add(rope.body,fruit);
-
-  fruit_con = new Link(rope,fruit);
-
-  rectMode(CENTER);
-  ellipseMode(RADIUS);
-  imageMode(CENTER);
-  
+fireball = createSprite(0,400)
+fireball.addImage(fireImg)
+fireball.scale=0.1
+fireball.velocityX=-7
 }
 
 function draw() 
 {
-  background(51);
-  image(bg_img,width/2,height/2,490,690);
+  background("wheat");
+  camera.x = ball.position.x
+  camera.y = ball.position.y
+  Engine.update(eng)
+  ellipseMode(CENTER)
+  rectMode(CENTER)
+  imageMode(CENTER)
+  image(ballImg,ball.position.x,ball.position.y,60,60)
 
-  if(fruit!=null){
-    image(food,fruit.position.x,fruit.position.y,70,70);
+  drawSprites();
+console.log(ball.position.y)
+  if (keyDown("UP_ARROW")){
+    Body.applyForce(ball,ball.position,{x:0,y:-0.005})
+  }
+  ground.show()
+  ground2.show()
+  ground3.show()
+  ground4.show()
+  ground5.show()
+  ground6.show()
+  if (keyDown("RIGHT_ARROW")){
+    Body.applyForce(ball,ball.position,{x:0.005,y:0})
+  }
+  if (keyDown("LEFT_ARROW")){
+    Body.applyForce(ball,ball.position,{x:-0.005,y:0})
   }
 
-  rope.show();
-  Engine.update(engine);
-  ground.show();
-
-  if(collide(fruit,bunny)==true)
-  {
-    bunny.changeAnimation('eating');
+  if(keyDown("space")){
+    camera.zoom = camera.zoom - 0.1; 
   }
-   
-  if(collide(fruit,ground.body)==true )
-  {
-     bunny.changeAnimation('crying');
-   }
 
-   drawSprites();
+  if(keyDown("space")){
+    camera.zoom = camera.zoom - 0.1; 
+  }
+
+  if(keyDown("e")){
+    camera.zoom = camera.zoom + 0.1; 
+  }
+
+  if (ball.position.y>460){
+    window.location.reload()
+  }
+
+// create fireball as obstacle on ground 1
+
+
+if(fireball.x>600){
+  fireball.velocityX = -7
 }
 
-function drop()
-{
-  rope.break();
-  fruit_con.dettach();
-  fruit_con = null; 
+if(fireball.x<0){
+  fireball.velocityX = 7
 }
 
-function collide(body,sprite)
-{
-  if(body!=null)
-        {
-         var d = dist(body.position.x,body.position.y,sprite.position.x,sprite.position.y);
-          if(d<=80)
-            {
-              World.remove(engine.world,fruit);
-               fruit = null;
-               return true; 
-            }
-            else{
-              return false;
-            }
-         }
 }
+
+// function keyPressed(){
+
+// }
